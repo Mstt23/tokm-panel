@@ -28,7 +28,7 @@ export default function Hero() {
               Öztürk
             </span>
             <span className="block text-6xl sm:text-7xl lg:text-9xl font-bold text-white leading-tight second-left slide-in-right">
-              Kurs Merkezi
+              Eğitim Kurumları
             </span>
           </div>
         </div>
