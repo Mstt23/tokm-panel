@@ -16,6 +16,8 @@ import {
   exportWeeklyStudentMatrixHtml
 } from "../../lib/exportSchedule.js";
 import { buildClassroomsByGroupMap, getAllCampusClassroomNames } from "../../lib/campusClassrooms.js";
+import { STORAGE_KEYS } from "../../lib/scheduleStorageTransfer.js";
+import ScheduleStorageTransferPanel from "./ScheduleStorageTransferPanel.jsx";
 
 const groupNames = kurumData.gruplar ?? [];
 const toMinutes = (time) => {
@@ -36,9 +38,6 @@ const timeSlots = Object.entries(kurumData.ders_saatleri ?? {})
 
 const isBreakSlot = (slotName) => slotName.toLowerCase().includes("arası");
 const DAYS = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
-const STORAGE_KEY = "weeklyScheduleAssignmentsByDay";
-const VISIBLE_GROUPS_STORAGE_KEY = "scheduleVisibleGroups";
-const TEACHER_VIEW_ENTRIES_STORAGE_KEY = "scheduleTeacherViewEntries";
 
 const parseTimeToMinutes = (timeText) => {
   const [hourText, minuteText] = String(timeText).split(":");
@@ -167,7 +166,7 @@ export default function ScheduleTable({
   const [exportMenuOpen, setExportMenuOpen] = React.useState(false);
   const [visibleGroups, setVisibleGroups] = React.useState(() => {
     try {
-      const raw = window.localStorage.getItem(VISIBLE_GROUPS_STORAGE_KEY);
+      const raw = window.localStorage.getItem(STORAGE_KEYS.visibleGroups);
       if (!raw) return new Set(groupNames);
       const parsed = JSON.parse(raw);
       if (!Array.isArray(parsed)) return new Set(groupNames);
@@ -200,7 +199,7 @@ export default function ScheduleTable({
 
   const [teacherViewEntries, setTeacherViewEntries] = React.useState(() => {
     try {
-      const raw = window.localStorage.getItem(TEACHER_VIEW_ENTRIES_STORAGE_KEY);
+      const raw = window.localStorage.getItem(STORAGE_KEYS.teacherViewEntries);
       if (!raw) return {};
       const parsed = JSON.parse(raw);
       return parsed && typeof parsed === "object" ? parsed : {};
@@ -224,7 +223,7 @@ export default function ScheduleTable({
     const emptyState = createEmptyAssignmentsByDay();
 
     try {
-      const rawValue = window.localStorage.getItem(STORAGE_KEY);
+      const rawValue = window.localStorage.getItem(STORAGE_KEYS.assignmentsByDay);
       if (!rawValue) {
         return emptyState;
       }
@@ -375,7 +374,7 @@ export default function ScheduleTable({
 
   React.useEffect(() => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(assignmentsByDay));
+      window.localStorage.setItem(STORAGE_KEYS.assignmentsByDay, JSON.stringify(assignmentsByDay));
     } catch {
       // no-op
     }
@@ -389,7 +388,7 @@ export default function ScheduleTable({
 
   React.useEffect(() => {
     try {
-      window.localStorage.setItem(VISIBLE_GROUPS_STORAGE_KEY, JSON.stringify([...visibleGroups]));
+      window.localStorage.setItem(STORAGE_KEYS.visibleGroups, JSON.stringify([...visibleGroups]));
     } catch {
       // no-op
     }
@@ -397,7 +396,7 @@ export default function ScheduleTable({
 
   React.useEffect(() => {
     try {
-      window.localStorage.setItem(TEACHER_VIEW_ENTRIES_STORAGE_KEY, JSON.stringify(teacherViewEntries));
+      window.localStorage.setItem(STORAGE_KEYS.teacherViewEntries, JSON.stringify(teacherViewEntries));
     } catch {
       // no-op
     }
@@ -1460,6 +1459,27 @@ export default function ScheduleTable({
     }
   }, [onToggleScheduleEditMode]);
 
+  const programHasContent = React.useMemo(() => {
+    if (teacherViewEntries && typeof teacherViewEntries === "object" && Object.keys(teacherViewEntries).length > 0) {
+      return true;
+    }
+    return DAYS.some((d) => Object.keys(assignmentsByDay[d] ?? {}).length > 0);
+  }, [assignmentsByDay, teacherViewEntries]);
+
+  const handleStorageImportApplied = React.useCallback((data) => {
+    setAssignmentsByDay(data.assignmentsByDay);
+    setVisibleGroups(new Set(data.visibleGroups));
+    setTeacherViewEntries(data.teacherViewEntries);
+    setSelectedCells([]);
+    setSelectedTeacherCell(null);
+    setPendingLesson("");
+    setPendingClassroom("");
+    setFreeTeacherName("");
+    setPendingTeacherCellLabel("");
+    setPendingTeacherCellClassroom("");
+    setPendingTeacherCellLesson("");
+  }, []);
+
   return (
     <div className="schedule-layout schedule-layout--manual">
       <div className="schedule-fixed-top">
@@ -1783,6 +1803,8 @@ export default function ScheduleTable({
               ) : null}
             </div>
 
+            <ScheduleStorageTransferPanel groupNames={groupNames} onImportApplied={handleStorageImportApplied} />
+
             {tableViewMode === "gün" ? (
               <button
                 type="button"
@@ -1806,6 +1828,13 @@ export default function ScheduleTable({
             ))}
           </div>
         ) : null}
+
+        {!programHasContent ? (
+          <p className="schedule-no-saved-program" role="status">
+            Bu tarayıcı için kayıtlı program bulunamadı.
+          </p>
+        ) : null}
+
         </div>
       </div>
 

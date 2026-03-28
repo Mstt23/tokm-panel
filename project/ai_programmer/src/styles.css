@@ -1,17 +1,9 @@
-:root {
-  font-family: Arial, sans-serif;
-}
-
-html {
-  height: 100%;
-}
-
-#root {
-  height: 100%;
-}
-
-/* Gömülü / tam ekran ders programı: üst-alt sabit, orta kaydırılabilir */
+/*
+ * Ana Vite uygulamasına import edildiğinde global html/body/#root kuralları
+ * tüm sitede kaydırmayı kapatırdı. Stil yalnızca .ai-programmer-embed içinde geçerli tutulur.
+ */
 .ai-programmer-embed {
+  font-family: Arial, sans-serif;
   height: 100vh;
   height: 100dvh;
   display: flex;
@@ -19,18 +11,12 @@ html {
   min-height: 0;
   overflow: hidden;
   box-sizing: border-box;
+  background: #f4f6f8;
 }
 
 .ai-programmer-embed > .app {
   flex: 1;
   min-height: 0;
-}
-
-body {
-  margin: 0;
-  background: #f4f6f8;
-  height: 100%;
-  overflow: hidden;
 }
 
 .app {
@@ -1621,5 +1607,160 @@ body {
   background: #f8fafc;
   border-color: #94a3b8;
   color: #0f172a;
+}
+
+.schedule-no-saved-program {
+  margin: 0;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #64748b;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+}
+
+.schedule-storage-panel-wrap {
+  position: relative;
+}
+
+.schedule-storage-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 210;
+  width: min(380px, 92vw);
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid #d0d7de;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  box-sizing: border-box;
+}
+
+.schedule-storage-hint {
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #475569;
+}
+
+.schedule-storage-hint code {
+  font-size: 11px;
+  padding: 1px 4px;
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.schedule-storage-empty {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.schedule-storage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.schedule-storage-btn {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.schedule-storage-btn:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.schedule-storage-btn--secondary {
+  border-color: #cbd5e1;
+  background: #fff;
+  color: #334155;
+}
+
+.schedule-storage-btn--secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.schedule-storage-file-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.schedule-storage-msg {
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.schedule-storage-msg--ok {
+  color: #166534;
+}
+
+.schedule-storage-msg--error {
+  color: #b91c1c;
+}
+
+.schedule-storage-debug {
+  margin-top: 10px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.schedule-storage-debug summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #475569;
+}
+
+.schedule-storage-debug-dl {
+  margin: 8px 0 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+}
+
+.schedule-storage-debug-dl dt {
+  margin: 0;
+  font-weight: 600;
+}
+
+.schedule-storage-debug-dl dd {
+  margin: 0;
+}
+
+.schedule-storage-debug-errors {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: #b91c1c;
+}
+
+.schedule-storage-refresh-debug {
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
 }
 
