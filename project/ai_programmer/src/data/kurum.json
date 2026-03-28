@@ -1,0 +1,197 @@
+{
+  "derslik_sayisi": 7,
+  "binalar": [
+    {
+      "id": "ilkokul_binasi",
+      "ad": "Bayramoğlu Şubesi",
+      "gruplar": ["1.Sınıf", "2.Sınıf", "3.Sınıf", "4.Sınıf"],
+      "derslikler": ["Derslik 1", "Derslik 2","Derslik 3", "Derslik 4"]
+    },
+    {
+      "id": "ana_bina",
+      "ad": "5–12. Sınıflar (ana bina)",
+      "gruplar": [
+        "5.Sınıf", "6.Sınıf", "7.Sınıf",
+        "8.Sınıf (1)", "8.Sınıf (2)", "9.Sınıf", "10.Sınıf",
+        "11.Sınıf TM", "11.Sınıf MF", "12.Sınıf TM", "12.Sınıf MF"
+      ],
+      "derslikler": ["Derslik 1", "Derslik 2","Derslik 3", "Derslik 4", "Derslik 5","Derslik 6","Cam Kabin","Kütüphane","Villa Şube"]
+    }
+  ],
+  "otomatik_program": {
+    "hafta_ici_gunler": ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma"],
+    "hafta_sonu_gunler": ["Cumartesi", "Pazar"],
+    "hafta_ici_gunduz_dersler": [
+      "Bireysel Soru Çözümü",
+      "Bireysel Ödev Çözümü"
+    ],
+    "hafta_ici_aksam_hafif_dersler": [
+      "Tarih",
+      "Coğrafya",
+      "Sosyal Bilgiler"
+    ],
+    "aksam_baslangic_saati": "17:00",
+    "hafta_sonunda_one_cikan_dersler_notu": "Ana ders yükü (Türkçe, Matematik, Fen, vb.) hafta sonuna yığılır; hafta içi gündüzde yalnızca soru/ödev çözümü; akşam 17:00 sonrası hafif branşlar."
+  },
+  "dersler": [
+    "Türkçe", "Matematik", "Fen Bilimleri", "Sosyal Bilgiler",
+    "İngilizce", "Edebiyat", "AYT Matematik", "TYT Matematik",
+    "Geometri", "Fizik", "Kimya", "Biyoloji", "Tarih", "Coğrafya",
+    "Bireysel Soru Çözümü", "Deneme Sınavı", "Bireysel Ödev Çözümü"
+  ],
+  "ders_saatleri": {
+    "1": "10:00-10:40",
+    "2": "10:50-11:30",
+    "3": "11:40-12:30",
+    "4": "12:40-13:10",
+    "Öğlen Arası": "13:10-14:10",
+    "5": "14:10-14:50",
+    "6": "15:00-15:40",
+    "7": "15:50-16:30",
+    "8": "16:40-17:20",
+    "9": "17:30-18:10",
+    "10": "18:20-19:00",
+    "11": "19:10-19:50",
+    "12": "20:00-20:40"
+  },
+  "gruplar": [
+    "1.Sınıf","2.Sınıf","3.Sınıf","4.Sınıf","5.Sınıf","6.Sınıf",
+    "7.Sınıf","8.Sınıf (1)","8.Sınıf (2)","9.Sınıf","10.Sınıf","11.Sınıf TM", "11.Sınıf MF",
+    "12.Sınıf TM","12.Sınıf MF"
+  ],
+  "opsiyonel_dersler": {
+    "1.Sınıf": ["Bireysel Ödev Çözümü"],
+    "2.Sınıf": ["Bireysel Ödev Çözümü"],
+    "3.Sınıf": ["Bireysel Ödev Çözümü"],
+    "4.Sınıf": ["Deneme Sınavı", "Bireysel Ödev Çözümü"],
+    "5.Sınıf": ["Deneme Sınavı", "Bireysel Soru Çözümü"],
+    "6.Sınıf": ["Deneme Sınavı", "Bireysel Soru Çözümü"],
+    "7.Sınıf": ["Deneme Sınavı", "Bireysel Soru Çözümü"],
+    "8.Sınıf (1)": ["Deneme Sınavı", "Bireysel Soru Çözümü"],
+    "8.Sınıf (2)": ["Deneme Sınavı", "Bireysel Soru Çözümü"],
+    "9.Sınıf": ["Deneme Sınavı", "Bireysel Soru Çözümü"],
+    "10.Sınıf": ["Deneme Sınavı", "Bireysel Soru Çözümü"],
+    "11.Sınıf MF": ["Deneme Sınavı", "Bireysel Soru Çözümü"],
+    "11.Sınıf TM": ["Deneme Sınavı", "Bireysel Soru Çözümü"],
+    "12.Sınıf MF": ["Deneme Sınavı", "Bireysel Soru Çözümü"],
+    "12.Sınıf TM": ["Deneme Sınavı", "Bireysel Soru Çözümü"]
+  },
+  "ders_yükü": {
+    "1.Sınıf": {
+      "Türkçe": 2,
+      "Matematik": 2,
+      "Fen Bilimleri": 2,
+      "İngilizce": 2
+    },
+    "2.Sınıf": {
+      "Türkçe": 2,
+      "Matematik": 2,
+      "Fen Bilimleri": 2,
+      "İngilizce": 2
+    },
+    "3.Sınıf": {
+      "Türkçe": 2,
+      "Matematik": 2,
+      "Fen Bilimleri": 2,
+      "İngilizce": 2
+    },
+    "4.Sınıf": {
+      "Türkçe": 2,
+      "Matematik": 3,
+      "Fen Bilimleri": 3,
+      "İngilizce": 4,
+      "Sosyal Bilgiler": 1,
+      "Deneme Sınavı":2
+    },
+    "5.Sınıf": {
+      "Türkçe": 2,
+      "Matematik": 2,
+      "Fen Bilimleri": 2,
+      "İngilizce": 4,
+      "Deneme Sınavı":2
+    },
+    "6.Sınıf": {
+      "Türkçe": 2,
+      "Matematik": 2,
+      "Fen Bilimleri": 2,
+      "İngilizce": 2,
+      "Deneme Sınavı":2
+    },
+    "7.Sınıf": {
+      "Türkçe": 2,
+      "Matematik": 2,
+      "Fen Bilimleri": 2,
+      "İngilizce": 2,
+      "Deneme Sınavı":2
+    },
+    "8.Sınıf (1)": {
+      "Türkçe": 2,
+      "Matematik": 4,
+      "Fen Bilimleri": 2,
+      "İngilizce": 2,
+      "Tarih":2,
+      "Deneme Sınavı":2
+    },
+    "8.Sınıf (2)": {
+      "Türkçe": 2,
+      "Matematik": 4,
+      "Fen Bilimleri": 2,
+      "İngilizce": 2,
+      "Tarih":2,
+      "Deneme Sınavı":2
+    },
+  
+    "9.Sınıf": {
+      "Türkçe": 2,
+      "Edebiyat":2,
+      "Matematik": 2,
+      "Fizik": 2,
+      "Kimya": 2,
+      "Biyoloji": 2,
+      "Deneme Sınavı":2
+    },
+    "10.Sınıf": {
+      "Türkçe": 2,
+      "Edebiyat":2,
+      "Matematik": 2,
+      "Fizik": 2,
+      "Kimya": 2,
+      "Biyoloji": 2,
+      "Deneme Sınavı":2
+    },
+    "11.Sınıf MF": {
+      "Türkçe": 2,
+      "Matematik": 4,
+      "Fizik": 2,
+      "Kimya": 2,
+      "Biyoloji": 2,
+      "Deneme Sınavı":2
+    },
+    "11.Sınıf TM": {
+       "Türkçe": 2,
+      "Edebiyat":2,
+      "Matematik": 4,
+      "Coğrafya": 2,
+      "Tarih": 2,
+      "Deneme Sınavı":2
+    },
+    "12.Sınıf MF": {
+       "Türkçe": 2,
+      "Matematik": 4,
+      "Geometri": 2,
+      "Fizik": 3,
+      "Kimya": 3,
+      "Biyoloji": 2,
+      "Deneme Sınavı":2
+    },
+    "12.Sınıf TM": {
+      "Türkçe": 2,
+      "Edebiyat":2,
+      "Matematik": 4,
+      "Geometri": 2,
+      "Coğrafya": 2,
+      "Tarih": 2,
+      "Deneme Sınavı":2
+    }
+  }
+}

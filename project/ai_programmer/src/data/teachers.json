@@ -1,0 +1,532 @@
+{
+    "öğretmenler": [
+        {
+            "ad": "DENEME GÖZETMENİ",
+            "branşlar": [
+                "Deneme Sınavı"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": "10:00-19:00",
+                "Salı": "10:00-19:00",
+                "Çarşamba": "10:00-19:00",
+                "Perşembe": "10:00-19:00",
+                "Cuma":  "10:00-19:00",
+                "Cumartesi": "10:00-19:00",
+                "Pazar": "10:00-19:00"
+            },
+            "gruplar": [
+                "4.Sınıf",
+                "5.Sınıf",
+                "6.Sınıf",
+                "7.Sınıf",
+                "8.Sınıf (1)",
+                "8.Sınıf (2)",
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "11.Sınıf TM",
+                "12.Sınıf TM",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "BRANŞ SORU ÇÖZÜMÜ",
+            "branşlar": [
+                "Bireysel Soru Çözümü",
+                "Bireysel Ödev Çözümü"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": "10:00-19:00",
+                "Salı": "10:00-19:00",
+                "Çarşamba": "10:00-19:00",
+                "Perşembe": "10:00-19:00",
+                "Cuma":  "10:00-19:00",
+                "Cumartesi": "10:00-19:00",
+                "Pazar": "10:00-19:00"
+            },
+            "gruplar": [
+                "4.Sınıf",
+                "5.Sınıf",
+                "6.Sınıf",
+                "7.Sınıf",
+                "8.Sınıf (1)",
+                "8.Sınıf (2)",
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "11.Sınıf TM",
+                "12.Sınıf TM",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "TUĞBA ÖZTÜRK",
+            "branşlar": [
+                "Matematik",
+                "AYT Matematik",
+                "TYT Matematik",
+                "Geometri"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": "10:00-19:00",
+                "Salı": "10:00-19:00",
+                "Çarşamba": "10:00-19:00",
+                "Perşembe": "14:00-19:00",
+                "Cuma": null,
+                "Cumartesi": "10:00-19:00",
+                "Pazar": "10:00-19:00"
+            },
+            "gruplar": [
+                "8.Sınıf (1)",
+                "8.Sınıf (2)",
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "11.Sınıf TM",
+                "12.Sınıf TM",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "RAŞİT AKDEMİR",
+            "branşlar": [
+                "Türkçe"
+                
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": "18:00-19:00",
+                "Salı": null,
+                "Çarşamba": null,
+                "Perşembe": "18:00-19:00",
+                "Cuma": null,
+                "Cumartesi": "10:00-19:00",
+                "Pazar": "10:00-19:00"
+            },
+            "gruplar": [
+                "1.Sınıf",
+                "2.Sınıf",
+                "3.Sınıf",
+                "4.Sınıf",
+                "5.Sınıf",
+                "6.Sınıf",
+                "7.Sınıf",
+                "8.Sınıf (1)",
+                "8.Sınıf (2)",
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "11.Sınıf TM",
+                "12.Sınıf TM",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "AYŞEGÜL AKBULUT",
+            "branşlar": [
+                "Türkçe",
+                "Matematik",
+                "Fen Bilimleri",
+                "Sosyal Bilgiler"
+                
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": "14:00-19:00",
+                "Çarşamba": "14:00-19:00",
+                "Perşembe": "14:00-19:00",
+                "Cuma": "14:00-19:00",
+                "Cumartesi": null,
+                "Pazar": null
+            },
+            "gruplar": [
+                "1.Sınıf",
+                "2.Sınıf",
+                "3.Sınıf",
+                "4.Sınıf",
+                "5.Sınıf"
+            ]
+        },
+        {
+            "ad": "YİĞİT CAN POLAT",
+            "branşlar": [
+                "İngilizce"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": "10:00-19:00",
+                "Salı": "10:00-19:00",
+                "Çarşamba": "10:00-19:00",
+                "Perşembe": "10:00-19:00",
+                "Cuma": null,
+                "Cumartesi": null,
+                "Pazar": "10:00-19:00"
+            },
+            "gruplar": [
+                "1.Sınıf",
+                "2.Sınıf",
+                "3.Sınıf",
+                "4.Sınıf",
+                "5.Sınıf",
+                "6.Sınıf",
+                "7.Sınıf",
+                "8.Sınıf (1)",
+                "8.Sınıf (2)"
+                
+            ]
+        },
+        {
+            "ad": "SEZGİN AKALIN",
+            "branşlar": [
+                "Fizik"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": "10:00-19:00",
+                "Salı": null,
+                "Çarşamba": null,
+                "Perşembe": null,
+                "Cuma": null,
+                "Cumartesi": null,
+                "Pazar": "10:00-19:00"
+            },
+            "gruplar": [
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "MİNA SÜEDA GÜNEŞ",
+            "branşlar": [
+                "Matematik",
+                "Fen Bilimleri"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": "10:00-19:00",
+                "Salı": "10:00-19:00",
+                "Çarşamba": "10:00-19:00",
+                "Perşembe": "10:00-19:00",
+                "Cuma": null,
+                "Cumartesi": "10:00-19:00",
+                "Pazar": "10:00-19:00"
+            },
+            "gruplar": [
+                "5.Sınıf",
+                "6.Sınıf",
+                "7.Sınıf",
+                "8.Sınıf (1)",
+                "8.Sınıf (2)"
+            ]
+        },
+        {
+            "ad": "ERDAL ÇAPAR",
+            "branşlar": [
+                "Biyoloji"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": null,
+                "Çarşamba": "10:00-19:00",
+                "Perşembe": null,
+                "Cuma": null,
+                "Cumartesi": null,
+                "Pazar": null
+            },
+            "gruplar": [
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "REMZİ YILDIZ",
+            "branşlar": [
+                "Kimya"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": null,
+                "Çarşamba": "10:00-19:00",
+                "Perşembe": null,
+                "Cuma": null,
+                "Cumartesi": null,
+                "Pazar": null
+            },
+            "gruplar": [
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "HASAN VURAL",
+            "branşlar": [
+                "Fizik"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": null,
+                "Çarşamba": null,
+                "Perşembe": null,
+                "Cuma": null,
+                "Cumartesi": "14:00-19:00",
+                "Pazar": "14:00-19:00"
+            },
+            "gruplar": [
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "YILMAZ KILIÇ",
+            "branşlar": [
+                "Kimya"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": null,
+                "Çarşamba": null,
+                "Perşembe": null,
+                "Cuma": null,
+                "Cumartesi": "10:00-19:00",
+                "Pazar": null
+            },
+            "gruplar": [
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "ÖMER KARAAĞAÇ",
+            "branşlar": [
+                "Matematik",
+                "TYT Matematik"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": null,
+                "Çarşamba": "10:00-19:00",
+                "Perşembe": null,
+                "Cuma": null,
+                "Cumartesi": null,
+                "Pazar": "10:00-19:00"
+            },
+            "gruplar": [
+                "5.Sınıf",
+                "6.Sınıf",
+                "7.Sınıf",
+                "8.Sınıf (1)",
+                "8.Sınıf (2)",
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "11.Sınıf TM",
+                "12.Sınıf TM",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "ERHAN SOLAK",
+            "branşlar": [
+                "İngilizce"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": null,
+                "Çarşamba": null,
+                "Perşembe": null,
+                "Cuma": null,
+                "Cumartesi": "10:00-19:00",
+                "Pazar": null
+            },
+            "gruplar": [
+                "1.Sınıf",
+                "2.Sınıf",
+                "3.Sınıf",
+                "4.Sınıf",
+                "5.Sınıf",
+                "6.Sınıf",
+                "7.Sınıf",
+                "8.Sınıf (1)",
+                "8.Sınıf (2)"
+            ]
+        },
+        {
+            "ad": "ALİ KEMAL BARAN",
+            "branşlar": [
+                "Türkçe",
+                "Edebiyat"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": null,
+                "Çarşamba": null,
+                "Perşembe": null,
+                "Cuma": null,
+                "Cumartesi": null,
+                "Pazar": "10:00-19:00"
+            },
+            "gruplar": [
+                "8.Sınıf (1)",
+                "8.Sınıf (2)",
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "11.Sınıf TM",
+                "12.Sınıf TM",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "ÖMER ÇUBUKÇU",
+            "branşlar": [
+                "Biyoloji"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": null,
+                "Çarşamba": null,
+                "Perşembe": null,
+                "Cuma": null,
+                "Cumartesi": "14:00-19:00",
+                "Pazar": null
+            },
+            "gruplar": [
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "FAHRİ ÖZ",
+            "branşlar": [
+                "Sosyal Bilgiler",
+                "Tarih"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": "16:30-19:00",
+                "Çarşamba": null,
+                "Perşembe": null,
+                "Cuma": null,
+                "Cumartesi": "10:00-19:00",
+                "Pazar": null
+            },
+            "gruplar": [
+                "8.Sınıf (1)",
+                "8.Sınıf (2)",
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf TM",
+                "12.Sınıf TM"
+            ]
+        },
+        {
+            "ad": "TURHAN KARAALİOĞLU",
+            "branşlar": [
+                "Coğrafya"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": null,
+                "Çarşamba": "16:30-20:30",
+                "Perşembe": null,
+                "Cuma": null,
+                "Cumartesi": null,
+                "Pazar": null
+            },
+            "gruplar": [
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf TM",
+                "12.Sınıf TM"
+            ]
+        },
+        {
+            "ad": "ŞURA YÜKSEL",
+            "branşlar": [
+                "Matematik",
+                "AYT Matematik",
+                "TYT Matematik",
+                "Geometri"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": null,
+                "Çarşamba": null,
+                "Perşembe": "16:30-19:00",
+                "Cuma": null,
+                "Cumartesi": null,
+                "Pazar": null
+            },
+            "gruplar": [
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "11.Sınıf TM",
+                "12.Sınıf TM",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "İDRİS GÜRSOY",
+            "branşlar": [
+                "Matematik",
+                "AYT Matematik",
+                "TYT Matematik",
+                "Geometri"
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": null,
+                "Salı": null,
+                "Çarşamba": null,
+                "Perşembe": null,
+                "Cuma": null,
+                "Cumartesi": "10:00-19:00",
+                "Pazar": "10:00-19:00"
+            },
+            "gruplar": [
+                "6.Sınıf",
+                "7.Sınıf",
+                "8.Sınıf (1)",
+                "8.Sınıf (2)",
+                "9.Sınıf",
+                "10.Sınıf",
+                "11.Sınıf MF",
+                "11.Sınıf TM",
+                "12.Sınıf TM",
+                "12.Sınıf MF"
+            ]
+        },
+        {
+            "ad": "BELGİN POLAT",
+            "branşlar": [
+                "Bireysel Ödev Çözümü",
+                "Deneme Sınavı"
+        
+            ],
+            "çalışma_günleri": {
+                "Pazartesi": "10:00-19:00",
+                "Salı":"10:00-19:00",
+                "Çarşamba":"10:00-19:00",
+                "Perşembe": "10:00-19:00",
+                "Cuma": "10:00-19:00",
+                "Cumartesi": null,
+                "Pazar": null
+            },
+            "gruplar": [
+                "1.Sınıf",
+                "2.Sınıf",
+                "3.Sınıf",
+                "4.Sınıf",
+                "5.Sınıf"
+            ]
+        }
+    ]
+}

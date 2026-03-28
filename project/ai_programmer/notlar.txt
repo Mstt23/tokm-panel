@@ -1,0 +1,14 @@
+-ekrana sığmada sorun olduğu için program arayüzünde hagi grupların 
+görüneceğini seçen bir pencere
+
++ ai de arka arkaya girilen drslikler farklıı 
+
+-iki branşlı öğretmenlerin ve de birden fazla öğretmeni olan branşların
+ o grup için hangi branşa hangi öğretmenin gireceği seçilmeli
+
+-deaktif öğretmen ders yükü duruyorsa deaktih ama kırmızı çerçeveli olsun
+
+-neden aktif olmadığı hakkında mini uyarı
+
+-ertesi güne atılan derslerde 3. dersler aynı günde olsun. en az 4 saat 
+olsun zorunluluk varsaa

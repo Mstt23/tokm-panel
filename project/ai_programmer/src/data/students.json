@@ -1,0 +1,496 @@
+{
+  "öğrenciler": [
+    {
+      "ad soyad": "ECE GÖRGÜ",
+      "sınıfı": "4"
+    },
+    {
+      "ad soyad": "İPEK YASEMİN YILDIZ",
+      "sınıfı": "4"
+    },
+    {
+      "ad soyad": "AHMET TUNA ÖZTÜRK",
+      "sınıfı": "4"
+    },
+    {
+      "ad soyad": "HAMZA ASAF KESKİN",
+      "sınıfı": "4"
+    },
+    {
+      "ad soyad": "YUSUF EREN ÖZTÜRK",
+      "sınıfı": "4"
+    },
+    {
+      "ad soyad": "ZEHRA NİHAL DEMİRKAYA",
+      "sınıfı": "4"
+    },
+    {
+      "ad soyad": "YAHYA KALKAN",
+      "sınıfı": "4"
+    },
+    {
+      "ad soyad": "MERYEM PERÇİN",
+      "sınıfı": "4"
+    },
+    {
+      "ad soyad": "DEFNE SARIYAR",
+      "sınıfı": "5"
+    },
+    {
+      "ad soyad": "ERDOĞAN AYAZ GÜLCAN",
+      "sınıfı": "5"
+    },
+    {
+      "ad soyad": "ELİF YADE İVGİN",
+      "sınıfı": "5"
+    },
+    {
+      "ad soyad": "MUHAMMED HAMZA YAKUPOĞLU",
+      "sınıfı": "5"
+    },
+    {
+      "ad soyad": "ARAS MERT DERSE",
+      "sınıfı": "6"
+    },
+    {
+      "ad soyad": "TUBA TAKA",
+      "sınıfı": "6"
+    },
+    {
+      "ad soyad": "EFE KAYRA KOÇ",
+      "sınıfı": "6"
+    },
+    {
+      "ad soyad": "EYMEN YILDIZ",
+      "sınıfı": "6"
+    },
+    {
+      "ad soyad": "SALİM EFE AYDOĞDU",
+      "sınıfı": "6"
+    },
+    {
+      "ad soyad": "EBRAR ÖZKAN",
+      "sınıfı": "7"
+    },
+    {
+      "ad soyad": "AHMET BERAT ÖZTÜRK",
+      "sınıfı": "7"
+    },
+    {
+      "ad soyad": "FURKAN CELEP",
+      "sınıfı": "7"
+    },
+    {
+      "ad soyad": "KUZEY OSMAN GÜNEŞ",
+      "sınıfı": "7"
+    },
+    {
+      "ad soyad": "ASMİN KAHRAMAN",
+      "sınıfı": "7"
+    },
+    {
+      "ad soyad": "EYMEN ADİL KALENDER",
+      "sınıfı": "7"
+    },
+    {
+      "ad soyad": "MİRAY ELİF YILDIRIM",
+      "sınıfı": "7"
+    },
+    {
+      "ad soyad": "EYMEN KOÇ",
+      "sınıfı": "7"
+    },
+    {
+      "ad soyad": "ÇINAR UTKU TEKİN",
+      "sınıfı": "7"
+    },
+    {
+      "ad soyad": "MEHMET KAVA OSLU",
+      "sınıfı": "7"
+    },
+    {
+      "ad soyad": "FATİH KEREM KÖSEOĞLU",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "ADANUR TOPÇU",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "ALMİRA KAHRAMAN ( KARDEŞ )",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "AYŞEGÜL NİLDA YILMAZ",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "BERİN PEHLİVANLI",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "ELİFNUR ÜSTÜNDAĞ",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "CEYLİN SU KARA",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "DENİZ TALYA SEÇKİN",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "HAZAL GENÇ",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "EYMEN HAMZA GEDİKLİ",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "İKRANUR ARSLAN",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "MUHAMMED EMİRCAN DEMİR",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "METE YAPGU",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "NEHİR AYDIN",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "TÜRKAN YILMAZ",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "ÖMER FARUK YELDEN",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "YAĞIZ EFE KURT",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "YASİN CANPOLAT",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "YASİN BERAT AYBİRDİ",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "EYMEN GÜRBÜZ",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "ZEHRA CEVAHİR",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "EFE DOĞAN",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "ZEHRA AYŞEN ORAL",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "HARUN ALTAN",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "FATMA BETÜL AKBABA",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "ZEYNEP KÜBRA KEKLİKÇİ",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "MERT UYSAL",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "MERVEGÜL OĞURLU",
+      "sınıfı": "8"
+    },
+    {
+      "ad soyad": "AYŞENUR YILDIRIM",
+      "sınıfı": "9"
+    },
+    {
+      "ad soyad": "ECRİN SOYTÜRK",
+      "sınıfı": "10"
+    },
+    {
+      "ad soyad": "EGEMEN AKTAŞ",
+      "sınıfı": "10"
+    },
+    {
+      "ad soyad": "KEREM DENİZ ÖZTÜRK",
+      "sınıfı": "10"
+    },
+    {
+      "ad soyad": "ÖMER FARUK SİRMEN",
+      "sınıfı": "10"
+    },
+    {
+      "ad soyad": "ELİF DİLAY DEMİRKAYA",
+      "sınıfı": "10"
+    },
+    {
+      "ad soyad": "ÖMER TALHA PERÇİN",
+      "sınıfı": "10"
+    },
+    {
+      "ad soyad": "SARPER PEHLİVANLI",
+      "sınıfı": "10"
+    },
+    {
+      "ad soyad": "ÜMMÜ SİMAY KOÇ",
+      "sınıfı": "10"
+    },
+    {
+      "ad soyad": "ASEL ERVA TÜRKMEN",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "AYSİMA MİRAÇ KÜÇÜK",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "BEYZA ARAS",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "CEREN KALENDER",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "DURU AYDEMİR",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "EBRAR ÖZTÜRK",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "EYLÜL TAŞÇI",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "İCLAL CEVAHİR",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "MEDİNE TOPKAYA",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "NİHAL KIR",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "MUHAMMED EREN DEMİR",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "ÖMER KAYA",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "İREMNAZ DEDEOĞLU",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "HÜDANUR ERYİĞİT",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "ÖMÜR SEDEF ÖZÇELİK",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "HASİP SAMED TURGUT",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "KUBİLAY EFE ÇAKAL",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "CEYLİN ALKAYA",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "YAREN ÖYKÜ ERDAĞ",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "AYŞE ÇAĞLA ÖNER",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "CEMİL TUNA ÖZTÜRK",
+      "sınıfı": "11"
+    },
+    {
+      "ad soyad": "HİRANUR DURMAZ",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "ALPEREN ALTAY",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "AHMET EREN AYDIN",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "CEREN GENÇ",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "CEYLİN DURU YALÇIN",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "EBRAR ÇAKAL",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "ECLİL EBRAR USTA",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "ERVA BETÜL NİZAMOĞLU",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "GONCA BULUT",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "IRMAK ÖZKAN",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "İREM NAZ TİRYAKİ",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "MUHAMMED CEVAHİR",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "SERDAL ORAL",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "TUNA YILDIRIM",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "PETEK YAREN ARSLAN",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "YASEMİN ALTÜRK",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "UMUT SEFA KOÇ",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "EREN KARATAŞ",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "ULAŞ KARATAŞ",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "DİDEM EBRAR MERMER",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "YUSUF AZİZ APAYDIN",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "NURTEN GÜZELYURT",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "İREM YORGUN",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "IŞIL NAZ GÜVEN",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "BEYZA ARAS",
+      "sınıfı": "12"
+    },
+    {
+      "ad soyad": "ECRİN ÖĞÜT",
+      "sınıfı": "M"
+    },
+    {
+      "ad soyad": "ESLEM KARAKAYA",
+      "sınıfı": "M"
+    },
+    {
+      "ad soyad": "EYÜP ENSAR TAKA",
+      "sınıfı": "M"
+    },
+    {
+      "ad soyad": "KUTSİ YASİN SALTAŞ",
+      "sınıfı": "M"
+    },
+    {
+      "ad soyad": "ŞEVVAL ÇETİN",
+      "sınıfı": "M"
+    },
+    {
+      "ad soyad": "MEHMET AKİF DURMAZ",
+      "sınıfı": "M"
+    },
+    {
+      "ad soyad": "FERİT ALİ YETGİN",
+      "sınıfı": "M"
+    },
+    {
+      "ad soyad": "SENANUR SÖNMEZ",
+      "sınıfı": "M"
+    },
+    {
+      "ad soyad": "GİZEM ALTINTAŞ",
+      "sınıfı": "M"
+    },
+    {
+      "ad soyad": "BUSENUR ATAKUR",
+      "sınıfı": "M"
+    },
+    {
+      "ad soyad": "MERT ÖZYİĞİT",
+      "sınıfı": "M"
+    },
+    {
+      "ad soyad": "ELİF DÜNDAR",
+      "sınıfı": "M"
+    },
+    {
+      "ad soyad": "ŞEVVAL KILIÇ",
+      "sınıfı": "M"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+# Tuğba Öztürk Kurs Merkezi - Robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin
+
+# Sitemap
+Sitemap: https://tugbaozturkkursmerkezi.com/sitemap.xml
