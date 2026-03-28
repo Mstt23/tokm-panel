@@ -33,7 +33,21 @@ function isNetworkErrorMessage(msg: string): boolean {
   );
 }
 
+const MISSING_TABLE_HINT =
+  'Supabase’de `ders_programi_programs` tablosu henüz oluşturulmamış. Supabase Dashboard → SQL Editor’da şu dosyanın içeriğini çalıştırın: `supabase/migrations/20260328140000_create_ders_programi_programs.sql` (veya terminalde: `npx supabase db push`). Ardından sayfayı yenileyin.';
+
+function isMissingTableError(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false;
+  const e = err as { message?: string; code?: string; details?: string };
+  const msg = `${e.message ?? ''} ${e.details ?? ''}`.toLowerCase();
+  if (e.code === 'PGRST205') return true;
+  if (msg.includes('schema cache')) return true;
+  if (msg.includes('could not find the table') && msg.includes('ders_programi_programs')) return true;
+  return false;
+}
+
 function mapSupabaseError(err: unknown, fallback: string): string {
+  if (isMissingTableError(err)) return MISSING_TABLE_HINT;
   if (err && typeof err === 'object' && 'message' in err && typeof (err as { message: unknown }).message === 'string') {
     const msg = (err as { message: string }).message;
     if (isNetworkErrorMessage(msg)) return 'Ağ hatası: İnternet bağlantınızı kontrol edin.';
