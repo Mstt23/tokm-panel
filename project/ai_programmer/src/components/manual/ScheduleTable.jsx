@@ -16,7 +16,7 @@ import {
   exportWeeklyStudentMatrixHtml
 } from "../../lib/exportSchedule.js";
 import { buildClassroomsByGroupMap, getAllCampusClassroomNames } from "../../lib/campusClassrooms.js";
-import { STORAGE_KEYS } from "../../lib/scheduleStorageTransfer.js";
+import { STORAGE_KEYS, parseCellKeyToGroupSlot } from "../../lib/scheduleStorageTransfer.js";
 import ScheduleStorageTransferPanel from "./ScheduleStorageTransferPanel.jsx";
 
 const groupNames = kurumData.gruplar ?? [];
@@ -38,6 +38,27 @@ const timeSlots = Object.entries(kurumData.ders_saatleri ?? {})
 
 const isBreakSlot = (slotName) => slotName.toLowerCase().includes("arası");
 const DAYS = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+
+const SLOT_IDS_DESC_FOR_CELLKEY = [...timeSlots].map((t) => String(t.slot)).sort((a, b) => b.length - a.length);
+
+function enrichDayAssignmentsFromCellKeys(dayBlock) {
+  if (!dayBlock || typeof dayBlock !== "object") return {};
+  const next = { ...dayBlock };
+  for (const [cellKey, cell] of Object.entries(next)) {
+    if (!cell || typeof cell !== "object") continue;
+    const g = cell.group != null ? String(cell.group).trim() : "";
+    const s = cell.slot != null ? String(cell.slot).trim() : "";
+    if (g && s) continue;
+    const parsed = parseCellKeyToGroupSlot(cellKey, SLOT_IDS_DESC_FOR_CELLKEY);
+    if (!parsed) continue;
+    next[cellKey] = {
+      ...cell,
+      group: g || parsed.group,
+      slot: s || parsed.slot
+    };
+  }
+  return next;
+}
 
 const parseTimeToMinutes = (timeText) => {
   const [hourText, minuteText] = String(timeText).split(":");
@@ -234,7 +255,8 @@ export default function ScheduleTable({
       }
 
       return DAYS.reduce((acc, day) => {
-        acc[day] = parsedValue[day] && typeof parsedValue[day] === "object" ? parsedValue[day] : {};
+        const block = parsedValue[day] && typeof parsedValue[day] === "object" ? parsedValue[day] : {};
+        acc[day] = enrichDayAssignmentsFromCellKeys(block);
         return acc;
       }, {});
     } catch {
@@ -924,14 +946,24 @@ export default function ScheduleTable({
   /** Çakışmalar hücrede kırmızı çerçeve ile gösterilir; burada yalnızca veri tutarlılığı uyarıları. */
   const validationWarnings = React.useMemo(() => {
     const warningList = [];
+    const slotIdsDesc = [...timeSlots].map((t) => String(t.slot)).sort((a, b) => b.length - a.length);
 
     Object.entries(assignments).forEach(([cellKey, assignment]) => {
       if (!assignment) {
         return;
       }
 
-      const { group, slot, lesson, teacher: teacherName } = assignment;
-      if (!group || !slot || !lesson || !teacherName) {
+      let { group, slot, lesson, teacher: teacherName } = assignment;
+      if (!group || !slot) {
+        const parsed = parseCellKeyToGroupSlot(cellKey, slotIdsDesc);
+        if (parsed) {
+          if (!group) group = parsed.group;
+          if (!slot) slot = parsed.slot;
+        }
+      }
+      const lessonOk = lesson != null && String(lesson).trim() !== "";
+      const teacherOk = teacherName != null && String(teacherName).trim() !== "";
+      if (!group || !slot || !lessonOk || !teacherOk) {
         warningList.push(`Eksik atama bilgisi: ${cellKey}`);
         return;
       }
@@ -991,7 +1023,8 @@ export default function ScheduleTable({
     lessonUsageByGroupWeekly,
     optionalLessonsByGroup,
     requiredLessonLoadByGroup,
-    teachersByName
+    teachersByName,
+    timeSlots
   ]);
 
   const handleCellClick = (event, group, slot) => {

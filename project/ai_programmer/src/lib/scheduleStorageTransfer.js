@@ -3,6 +3,8 @@
  * Anahtarlar ScheduleTable ile aynı olmalıdır.
  */
 
+import kurumData from "../data/kurum.json";
+
 export const STORAGE_KEYS = {
   assignmentsByDay: "weeklyScheduleAssignmentsByDay",
   visibleGroups: "scheduleVisibleGroups",
@@ -13,6 +15,23 @@ export const EXPORT_FORMAT_VERSION = 1;
 export const EXPORT_APP_ID = "tokm-ders-programi-storage";
 
 const DAYS = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+
+/** getCellKey(group,slot) = `${group}-${slot}` — slot eşleşmesi uzun adlardan başlar (ör. "10" ile "1" karışmasın). */
+const SLOT_IDS_DESC = Object.keys(kurumData.ders_saatleri ?? {}).sort(
+  (a, b) => String(b).length - String(a).length
+);
+
+export function parseCellKeyToGroupSlot(cellKey, slotIdsSortedDesc = SLOT_IDS_DESC) {
+  const key = String(cellKey ?? "");
+  for (const slot of slotIdsSortedDesc) {
+    const s = String(slot);
+    const suf = `-${s}`;
+    if (key.endsWith(suf)) {
+      return { group: key.slice(0, -suf.length), slot: s };
+    }
+  }
+  return null;
+}
 
 function safeJsonParse(str) {
   try {
@@ -56,10 +75,19 @@ function normalizeAssignmentsByDay(raw, errors) {
         errors.push(`Geçersiz hücre değeri: ${day} / ${cellKey}`);
         return null;
       }
+      let group = cell.group != null ? String(cell.group).trim() : "";
+      let slot = cell.slot != null ? String(cell.slot).trim() : "";
+      if (!group || !slot) {
+        const parsed = parseCellKeyToGroupSlot(cellKey, SLOT_IDS_DESC);
+        if (parsed) {
+          if (!group) group = parsed.group;
+          if (!slot) slot = parsed.slot;
+        }
+      }
       const lesson = cell.lesson != null ? String(cell.lesson) : "";
       const teacher = cell.teacher != null ? String(cell.teacher) : "";
       const classroom = cell.classroom != null ? String(cell.classroom) : "";
-      out[day][cellKey] = { lesson, teacher, classroom };
+      out[day][cellKey] = { group, slot, lesson, teacher, classroom };
     }
   }
   return out;
