@@ -66,5 +66,5 @@ export default function DersProgramiStandalonePage() {
     );
   }
 
-  return <DersProgramiModule canEdit={canEdit} />;
+  return <DersProgramiModule canEdit={canEdit} supabaseUserId={user?.id ?? null} />;
 }

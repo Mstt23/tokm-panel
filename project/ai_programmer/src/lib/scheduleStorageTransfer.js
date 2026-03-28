@@ -222,35 +222,50 @@ export function parseImportJsonText(text, validGroupNames) {
   return validateAndMigrateImport(parsed.value, validGroupNames);
 }
 
-export function buildExportBundle() {
-  const read = (k) => {
-    try {
-      return window.localStorage.getItem(k);
-    } catch {
-      return null;
-    }
+/**
+ * Supabase `data` sütunu için düz nesne (formatVersion dışı).
+ */
+export function buildScheduleProgramPayloadFromState(assignmentsByDay, visibleGroups, teacherViewEntries) {
+  const bundle = buildExportBundleFromState(assignmentsByDay, visibleGroups, teacherViewEntries);
+  return {
+    assignmentsByDay: bundle.keys[STORAGE_KEYS.assignmentsByDay] ?? {},
+    visibleGroups: bundle.keys[STORAGE_KEYS.visibleGroups] ?? [],
+    teacherViewEntries: bundle.keys[STORAGE_KEYS.teacherViewEntries] ?? {},
   };
+}
 
+/**
+ * Eski localStorage kayıtlarını tek seferlik taşıma için okur.
+ */
+export function readLegacyScheduleLocalStorageForMigration(validGroupNames) {
   let assignmentsParsed = null;
   let visibleParsed = null;
   let teacherParsed = null;
   let hadVisibleKey = false;
 
-  const a = read(STORAGE_KEYS.assignmentsByDay);
-  if (a) {
-    const p = safeJsonParse(a);
-    if (p.ok) assignmentsParsed = p.value;
+  try {
+    const a = window.localStorage.getItem(STORAGE_KEYS.assignmentsByDay);
+    if (a) {
+      const p = safeJsonParse(a);
+      if (p.ok) assignmentsParsed = p.value;
+    }
+    const v = window.localStorage.getItem(STORAGE_KEYS.visibleGroups);
+    if (v !== null) {
+      hadVisibleKey = true;
+      const p = safeJsonParse(v);
+      if (p.ok) visibleParsed = p.value;
+    }
+    const t = window.localStorage.getItem(STORAGE_KEYS.teacherViewEntries);
+    if (t) {
+      const p = safeJsonParse(t);
+      if (p.ok) teacherParsed = p.value;
+    }
+  } catch {
+    return { ok: false, errors: ["localStorage okunamadı."] };
   }
-  const v = read(STORAGE_KEYS.visibleGroups);
-  if (v !== null) {
-    hadVisibleKey = true;
-    const p = safeJsonParse(v);
-    if (p.ok) visibleParsed = p.value;
-  }
-  const t = read(STORAGE_KEYS.teacherViewEntries);
-  if (t) {
-    const p = safeJsonParse(t);
-    if (p.ok) teacherParsed = p.value;
+
+  if (!assignmentsParsed && !teacherParsed && !hadVisibleKey) {
+    return { ok: false, errors: [], empty: true };
   }
 
   const keys = {
@@ -261,6 +276,41 @@ export function buildExportBundle() {
     keys[STORAGE_KEYS.visibleGroups] = Array.isArray(visibleParsed) ? visibleParsed : [];
   }
 
+  return validateAndMigrateImport(
+    { formatVersion: EXPORT_FORMAT_VERSION, keys },
+    validGroupNames
+  );
+}
+
+export function clearLegacyScheduleLocalStorage() {
+  try {
+    window.localStorage.removeItem(STORAGE_KEYS.assignmentsByDay);
+    window.localStorage.removeItem(STORAGE_KEYS.visibleGroups);
+    window.localStorage.removeItem(STORAGE_KEYS.teacherViewEntries);
+  } catch {
+    // no-op
+  }
+}
+
+/**
+ * Mevcut React state’ten dışa aktarma paketi (localStorage okumaz).
+ * @param {Record<string, Record<string, unknown>>} assignmentsByDay
+ * @param {Set<string>|string[]} visibleGroups
+ * @param {Record<string, unknown>} teacherViewEntries
+ */
+export function buildExportBundleFromState(assignmentsByDay, visibleGroups, teacherViewEntries) {
+  const visArr =
+    visibleGroups instanceof Set
+      ? [...visibleGroups]
+      : Array.isArray(visibleGroups)
+        ? [...visibleGroups]
+        : [];
+  const keys = {
+    [STORAGE_KEYS.assignmentsByDay]: assignmentsByDay && typeof assignmentsByDay === "object" ? assignmentsByDay : {},
+    [STORAGE_KEYS.visibleGroups]: visArr.filter((g) => typeof g === "string"),
+    [STORAGE_KEYS.teacherViewEntries]:
+      teacherViewEntries && typeof teacherViewEntries === "object" ? teacherViewEntries : {},
+  };
   return {
     formatVersion: EXPORT_FORMAT_VERSION,
     exportedAt: new Date().toISOString(),
@@ -269,8 +319,7 @@ export function buildExportBundle() {
   };
 }
 
-export function downloadScheduleExportJson() {
-  const bundle = buildExportBundle();
+export function downloadScheduleExportJsonFromBundle(bundle) {
   const text = JSON.stringify(bundle, null, 2);
   const blob = new Blob([text], { type: "application/json;charset=utf-8" });
   const url = URL.createObjectURL(blob);
@@ -283,8 +332,20 @@ export function downloadScheduleExportJson() {
   URL.revokeObjectURL(url);
 }
 
-/** Anlamlı kayıt var mı (boş program değil) */
-export function hasMeaningfulSavedProgram() {
+/** Tabloda veya öğretmen görünümünde anlamlı içerik var mı */
+export function hasMeaningfulProgramData(assignmentsByDay, teacherViewEntries) {
+  if (teacherViewEntries && typeof teacherViewEntries === "object" && Object.keys(teacherViewEntries).length > 0) {
+    return true;
+  }
+  if (!assignmentsByDay || typeof assignmentsByDay !== "object") return false;
+  return DAYS.some((day) => {
+    const block = assignmentsByDay[day];
+    return block && isPlainObject(block) && Object.keys(block).length > 0;
+  });
+}
+
+/** Yalnızca eski localStorage’da anlamlı program var mı (migrate kontrolü) */
+export function hasMeaningfulLegacyLocalStorage() {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEYS.assignmentsByDay);
     if (!raw) return false;
@@ -309,55 +370,21 @@ export function countAssignmentCells(assignmentsByDayObj) {
   return n;
 }
 
-export function getStorageDebugSnapshot() {
-  const out = {
+/**
+ * @param {object} [opts]
+ * @param {string|null} [opts.activeProgramId]
+ */
+export function getLiveStorageDebugSnapshot(assignmentsByDay, visibleGroups, teacherViewEntries, opts = {}) {
+  const vg = visibleGroups instanceof Set ? [...visibleGroups] : Array.isArray(visibleGroups) ? visibleGroups : [];
+  return {
     keys: { ...STORAGE_KEYS },
     assignmentsKey: STORAGE_KEYS.assignmentsByDay,
-    readOk: { assignments: false, visibleGroups: false, teacherView: false },
+    activeProgramId: opts.activeProgramId ?? null,
+    readOk: { assignments: true, visibleGroups: true, teacherView: true },
     errors: [],
-    assignmentCellCount: 0,
-    visibleGroupCount: 0,
-    teacherViewTeacherCount: 0,
+    assignmentCellCount: countAssignmentCells(assignmentsByDay),
+    visibleGroupCount: vg.length,
+    teacherViewTeacherCount:
+      teacherViewEntries && typeof teacherViewEntries === "object" ? Object.keys(teacherViewEntries).length : 0,
   };
-
-  try {
-    const ar = window.localStorage.getItem(STORAGE_KEYS.assignmentsByDay);
-    if (ar != null) {
-      const p = safeJsonParse(ar);
-      if (p.ok && isPlainObject(p.value)) {
-        out.readOk.assignments = true;
-        out.assignmentCellCount = countAssignmentCells(p.value);
-      } else out.errors.push("assignments: JSON geçersiz");
-    }
-  } catch (e) {
-    out.errors.push(`assignments: ${e}`);
-  }
-
-  try {
-    const vr = window.localStorage.getItem(STORAGE_KEYS.visibleGroups);
-    if (vr != null) {
-      const p = safeJsonParse(vr);
-      if (p.ok && Array.isArray(p.value)) {
-        out.readOk.visibleGroups = true;
-        out.visibleGroupCount = p.value.length;
-      } else out.errors.push("visibleGroups: JSON geçersiz");
-    }
-  } catch (e) {
-    out.errors.push(`visibleGroups: ${e}`);
-  }
-
-  try {
-    const tr = window.localStorage.getItem(STORAGE_KEYS.teacherViewEntries);
-    if (tr != null) {
-      const p = safeJsonParse(tr);
-      if (p.ok && isPlainObject(p.value)) {
-        out.readOk.teacherView = true;
-        out.teacherViewTeacherCount = Object.keys(p.value).length;
-      } else out.errors.push("teacherViewEntries: JSON geçersiz");
-    }
-  } catch (e) {
-    out.errors.push(`teacherView: ${e}`);
-  }
-
-  return out;
 }

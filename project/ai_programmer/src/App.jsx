@@ -13,6 +13,7 @@ export default function App({
   startOnSchedule = false,
   showScheduleHeaderBack = true,
   allowScheduleEdit = true,
+  supabaseUserId = null,
 } = {}) {
   const [screen, setScreen] = React.useState(startOnSchedule ? "schedule" : "home");
   const [scheduleMode, setScheduleMode] = React.useState("view");
@@ -68,6 +69,7 @@ export default function App({
           onToggleScheduleEditMode={() =>
             setScheduleMode((m) => (m === "edit" ? "view" : "edit"))
           }
+          supabaseUserId={supabaseUserId}
         />
       </section>
     </main>

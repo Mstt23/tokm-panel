@@ -16,7 +16,19 @@ import {
   exportWeeklyStudentMatrixHtml
 } from "../../lib/exportSchedule.js";
 import { buildClassroomsByGroupMap, getAllCampusClassroomNames } from "../../lib/campusClassrooms.js";
-import { STORAGE_KEYS, parseCellKeyToGroupSlot } from "../../lib/scheduleStorageTransfer.js";
+import {
+  parseCellKeyToGroupSlot,
+  buildScheduleProgramPayloadFromState,
+  readLegacyScheduleLocalStorageForMigration,
+  clearLegacyScheduleLocalStorage,
+  hasMeaningfulProgramData,
+  getLiveStorageDebugSnapshot,
+} from "../../lib/scheduleStorageTransfer.js";
+import {
+  getSchedules,
+  saveSchedule,
+  updateSchedule,
+} from "../../../../src/lib/scheduleProgramsService.ts";
 import ScheduleStorageTransferPanel from "./ScheduleStorageTransferPanel.jsx";
 
 const groupNames = kurumData.gruplar ?? [];
@@ -38,6 +50,7 @@ const timeSlots = Object.entries(kurumData.ders_saatleri ?? {})
 
 const isBreakSlot = (slotName) => slotName.toLowerCase().includes("arası");
 const DAYS = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+const DEFAULT_PROGRAM_NAME = "Ana program";
 
 const SLOT_IDS_DESC_FOR_CELLKEY = [...timeSlots].map((t) => String(t.slot)).sort((a, b) => b.length - a.length);
 
@@ -172,11 +185,22 @@ function buildRectangleCells(groupsForTable, timeSlots, startGroup, startSlot, e
   return sortCellsForKey(cells);
 }
 
+function mergeAssignmentsFromRemotePayload(raw) {
+  const empty = createEmptyAssignmentsByDay();
+  if (!raw || typeof raw !== "object") return empty;
+  for (const day of DAYS) {
+    const block = raw[day];
+    empty[day] = enrichDayAssignmentsFromCellKeys(block && typeof block === "object" ? block : {});
+  }
+  return empty;
+}
+
 export default function ScheduleTable({
   canEdit = true,
   allowScheduleEdit = true,
   scheduleEditModeActive = false,
   onToggleScheduleEditMode,
+  supabaseUserId = null,
 }) {
   const [currentDay, setCurrentDay] = React.useState("Pazartesi");
   const [selectedCells, setSelectedCells] = React.useState([]);
@@ -185,20 +209,7 @@ export default function ScheduleTable({
   const [freeTeacherName, setFreeTeacherName] = React.useState("");
   const [freeTeacherPickerOpen, setFreeTeacherPickerOpen] = React.useState(false);
   const [exportMenuOpen, setExportMenuOpen] = React.useState(false);
-  const [visibleGroups, setVisibleGroups] = React.useState(() => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEYS.visibleGroups);
-      if (!raw) return new Set(groupNames);
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return new Set(groupNames);
-      if (parsed.length === 0) return new Set();
-      const valid = parsed.filter((g) => typeof g === "string" && groupNames.includes(g));
-      if (valid.length === 0) return new Set(groupNames);
-      return new Set(valid);
-    } catch {
-      return new Set(groupNames);
-    }
-  });
+  const [visibleGroups, setVisibleGroups] = React.useState(() => new Set(groupNames));
   const [groupFilterOpen, setGroupFilterOpen] = React.useState(false);
   const [tableViewMode, setTableViewMode] = React.useState("gün");
   const [tableViewMenuOpen, setTableViewMenuOpen] = React.useState(false);
@@ -218,16 +229,13 @@ export default function ScheduleTable({
   const [exportSelectedStudentClasses, setExportSelectedStudentClasses] = React.useState(() => new Set());
   const [exportStudentOnlyInProgram, setExportStudentOnlyInProgram] = React.useState(false);
 
-  const [teacherViewEntries, setTeacherViewEntries] = React.useState(() => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEYS.teacherViewEntries);
-      if (!raw) return {};
-      const parsed = JSON.parse(raw);
-      return parsed && typeof parsed === "object" ? parsed : {};
-    } catch {
-      return {};
-    }
-  });
+  const [teacherViewEntries, setTeacherViewEntries] = React.useState(() => ({}));
+
+  const [scheduleLoadStatus, setScheduleLoadStatus] = React.useState(() => (supabaseUserId ? "loading" : "ready"));
+  const [scheduleLoadError, setScheduleLoadError] = React.useState(null);
+  const [activeProgramId, setActiveProgramId] = React.useState(null);
+  const [saveStatus, setSaveStatus] = React.useState("idle");
+  const [saveError, setSaveError] = React.useState(null);
 
   const scheduleTableRef = React.useRef(null);
   const exportWrapperRef = React.useRef(null);
@@ -240,29 +248,14 @@ export default function ScheduleTable({
   /** Yalnızca chip ile ders seçildiğinde tek öğretmen otomatik atansın (hücre tıklanınca tetiklenmesin) */
   const shouldAutoApplyAfterLessonPickRef = React.useRef(false);
 
-  const [assignmentsByDay, setAssignmentsByDay] = React.useState(() => {
-    const emptyState = createEmptyAssignmentsByDay();
+  const [assignmentsByDay, setAssignmentsByDay] = React.useState(() => createEmptyAssignmentsByDay());
 
-    try {
-      const rawValue = window.localStorage.getItem(STORAGE_KEYS.assignmentsByDay);
-      if (!rawValue) {
-        return emptyState;
-      }
-
-      const parsedValue = JSON.parse(rawValue);
-      if (!parsedValue || typeof parsedValue !== "object") {
-        return emptyState;
-      }
-
-      return DAYS.reduce((acc, day) => {
-        const block = parsedValue[day] && typeof parsedValue[day] === "object" ? parsedValue[day] : {};
-        acc[day] = enrichDayAssignmentsFromCellKeys(block);
-        return acc;
-      }, {});
-    } catch {
-      return emptyState;
-    }
+  const scheduleSnapshotRef = React.useRef({
+    assignmentsByDay,
+    visibleGroups,
+    teacherViewEntries,
   });
+  scheduleSnapshotRef.current = { assignmentsByDay, visibleGroups, teacherViewEntries };
 
   const lessonLoadByGroup = kurumData.ders_yükü ?? {};
   const optionalLessonsByGroup = kurumData.opsiyonel_dersler ?? {};
@@ -395,34 +388,10 @@ export default function ScheduleTable({
   }, [lessonLoadByGroup, optionalLessonsByGroup]);
 
   React.useEffect(() => {
-    try {
-      window.localStorage.setItem(STORAGE_KEYS.assignmentsByDay, JSON.stringify(assignmentsByDay));
-    } catch {
-      // no-op
-    }
-  }, [assignmentsByDay]);
-
-  React.useEffect(() => {
     if (allExportTeachers.length > 0 && exportSelectedTeachers.size === 0) {
       setExportSelectedTeachers(new Set(allExportTeachers));
     }
   }, [allExportTeachers]);
-
-  React.useEffect(() => {
-    try {
-      window.localStorage.setItem(STORAGE_KEYS.visibleGroups, JSON.stringify([...visibleGroups]));
-    } catch {
-      // no-op
-    }
-  }, [visibleGroups]);
-
-  React.useEffect(() => {
-    try {
-      window.localStorage.setItem(STORAGE_KEYS.teacherViewEntries, JSON.stringify(teacherViewEntries));
-    } catch {
-      // no-op
-    }
-  }, [teacherViewEntries]);
 
   React.useEffect(() => {
     if (!selectedTeacherCell) {
@@ -1492,12 +1461,10 @@ export default function ScheduleTable({
     }
   }, [onToggleScheduleEditMode]);
 
-  const programHasContent = React.useMemo(() => {
-    if (teacherViewEntries && typeof teacherViewEntries === "object" && Object.keys(teacherViewEntries).length > 0) {
-      return true;
-    }
-    return DAYS.some((d) => Object.keys(assignmentsByDay[d] ?? {}).length > 0);
-  }, [assignmentsByDay, teacherViewEntries]);
+  const programHasContent = React.useMemo(
+    () => hasMeaningfulProgramData(assignmentsByDay, teacherViewEntries),
+    [assignmentsByDay, teacherViewEntries]
+  );
 
   const handleStorageImportApplied = React.useCallback((data) => {
     setAssignmentsByDay(data.assignmentsByDay);
@@ -1513,9 +1480,197 @@ export default function ScheduleTable({
     setPendingTeacherCellLesson("");
   }, []);
 
+  const applyServerRowToState = React.useCallback(
+    (row) => {
+      const data = row?.data;
+      if (!data || typeof data !== "object") return;
+      const merged = mergeAssignmentsFromRemotePayload(data.assignmentsByDay);
+      const vis = Array.isArray(data.visibleGroups)
+        ? data.visibleGroups.filter((g) => typeof g === "string" && groupNames.includes(g))
+        : [];
+      const tv =
+        data.teacherViewEntries && typeof data.teacherViewEntries === "object" ? data.teacherViewEntries : {};
+      handleStorageImportApplied({
+        assignmentsByDay: merged,
+        visibleGroups: vis.length > 0 ? vis : [...groupNames],
+        teacherViewEntries: tv,
+      });
+    },
+    [handleStorageImportApplied]
+  );
+
+  React.useEffect(() => {
+    if (!supabaseUserId) {
+      setScheduleLoadStatus("ready");
+      setScheduleLoadError(null);
+      setActiveProgramId(null);
+      return;
+    }
+
+    let cancelled = false;
+    setScheduleLoadStatus("loading");
+    setScheduleLoadError(null);
+
+    (async () => {
+      const res = await getSchedules(supabaseUserId);
+      if (cancelled) return;
+      if (!res.ok) {
+        setScheduleLoadStatus("error");
+        setScheduleLoadError(res.error);
+        return;
+      }
+
+      let rows = res.data;
+
+      if (rows.length === 0) {
+        const mig = readLegacyScheduleLocalStorageForMigration(groupNames);
+        if (mig.ok && hasMeaningfulProgramData(mig.assignmentsByDay, mig.teacherViewEntries)) {
+          const payload = buildScheduleProgramPayloadFromState(
+            mig.assignmentsByDay,
+            new Set(mig.visibleGroups),
+            mig.teacherViewEntries
+          );
+          const saved = await saveSchedule({
+            userId: supabaseUserId,
+            programName: DEFAULT_PROGRAM_NAME,
+            data: payload,
+          });
+          if (!cancelled && saved.ok) {
+            clearLegacyScheduleLocalStorage();
+            rows = [saved.data];
+          }
+        }
+      }
+
+      if (cancelled) return;
+
+      if (rows.length === 0) {
+        setActiveProgramId(null);
+        setScheduleLoadStatus("ready");
+        return;
+      }
+
+      const preferred = rows.find((r) => r.program_name === DEFAULT_PROGRAM_NAME) ?? rows[0];
+      setActiveProgramId(preferred.id);
+      applyServerRowToState(preferred);
+      clearLegacyScheduleLocalStorage();
+      setScheduleLoadStatus("ready");
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- yalnızca kullanıcı / oturum değişiminde tam yükleme
+  }, [supabaseUserId]);
+
+  const handleSaveToSupabase = React.useCallback(async () => {
+    setSaveError(null);
+    if (!supabaseUserId) {
+      setSaveError("Kayıt için oturum gerekli.");
+      setSaveStatus("error");
+      return;
+    }
+    const payload = buildScheduleProgramPayloadFromState(assignmentsByDay, visibleGroups, teacherViewEntries);
+    if (
+      !payload.assignmentsByDay ||
+      typeof payload.assignmentsByDay !== "object" ||
+      !Array.isArray(payload.visibleGroups) ||
+      !payload.teacherViewEntries ||
+      typeof payload.teacherViewEntries !== "object"
+    ) {
+      setSaveError("Kaydedilecek veri boş veya geçersiz.");
+      setSaveStatus("error");
+      return;
+    }
+
+    setSaveStatus("saving");
+    let result;
+    if (activeProgramId) {
+      result = await updateSchedule(activeProgramId, { data: payload });
+    } else {
+      result = await saveSchedule({
+        userId: supabaseUserId,
+        programName: DEFAULT_PROGRAM_NAME,
+        data: payload,
+      });
+      if (result.ok) setActiveProgramId(result.data.id);
+    }
+
+    if (result.ok) {
+      setSaveStatus("saved");
+      window.setTimeout(() => setSaveStatus("idle"), 2000);
+    } else {
+      setSaveError(result.error);
+      setSaveStatus("error");
+    }
+  }, [supabaseUserId, activeProgramId, assignmentsByDay, visibleGroups, teacherViewEntries]);
+
+  const handleRetryLoad = React.useCallback(() => {
+    setScheduleLoadError(null);
+    if (!supabaseUserId) {
+      setScheduleLoadStatus("ready");
+      return;
+    }
+    setScheduleLoadStatus("loading");
+    (async () => {
+      const res = await getSchedules(supabaseUserId);
+      if (!res.ok) {
+        setScheduleLoadStatus("error");
+        setScheduleLoadError(res.error);
+        return;
+      }
+      const rows = res.data;
+      if (rows.length === 0) {
+        setActiveProgramId(null);
+        setScheduleLoadStatus("ready");
+        return;
+      }
+      const preferred = rows.find((r) => r.program_name === DEFAULT_PROGRAM_NAME) ?? rows[0];
+      setActiveProgramId(preferred.id);
+      applyServerRowToState(preferred);
+      clearLegacyScheduleLocalStorage();
+      setScheduleLoadStatus("ready");
+    })();
+  }, [supabaseUserId, applyServerRowToState]);
+
+  const storageDebugSnapshot = React.useMemo(
+    () => getLiveStorageDebugSnapshot(assignmentsByDay, visibleGroups, teacherViewEntries, { activeProgramId }),
+    [assignmentsByDay, visibleGroups, teacherViewEntries, activeProgramId]
+  );
+
   return (
-    <div className="schedule-layout schedule-layout--manual">
+    <div
+      className={`schedule-layout schedule-layout--manual${scheduleLoadStatus === "loading" ? " schedule-layout--supabase-loading" : ""}`}
+    >
       <div className="schedule-fixed-top">
+        {scheduleLoadStatus === "loading" ? (
+          <div className="schedule-supabase-loading" role="status" aria-live="polite">
+            <span className="schedule-supabase-loading-spinner" aria-hidden="true" />
+            Program yükleniyor…
+          </div>
+        ) : null}
+        {scheduleLoadStatus === "error" ? (
+          <div className="schedule-supabase-error" role="alert">
+            <span>{scheduleLoadError || "Yükleme hatası"}</span>
+            <button type="button" className="schedule-retry-btn" onClick={handleRetryLoad}>
+              Tekrar dene
+            </button>
+          </div>
+        ) : null}
+        {scheduleLoadStatus === "ready" ? (
+          <div className="schedule-persist-row">
+            <p className="schedule-persist-info">
+              {supabaseUserId
+                ? "Veriler artık hesabınıza kaydediliyor ve tüm cihazlardan erişilebilir."
+                : "Kalıcı kayıt için yönetim paneline giriş yapın."}
+            </p>
+            {saveError ? (
+              <p className="schedule-save-error" role="alert">
+                {saveError}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
         <div className="manual-top-section">
         <div className="day-switcher">
           <div className="day-switcher-left">
@@ -1836,7 +1991,23 @@ export default function ScheduleTable({
               ) : null}
             </div>
 
-            <ScheduleStorageTransferPanel groupNames={groupNames} onImportApplied={handleStorageImportApplied} />
+            {allowScheduleEdit && supabaseUserId && scheduleLoadStatus === "ready" ? (
+              <button
+                type="button"
+                className="schedule-supabase-save-btn"
+                onClick={handleSaveToSupabase}
+                disabled={saveStatus === "saving"}
+              >
+                {saveStatus === "saving" ? "Kaydediliyor…" : saveStatus === "saved" ? "Kaydedildi" : "Kaydet"}
+              </button>
+            ) : null}
+            <ScheduleStorageTransferPanel
+              groupNames={groupNames}
+              onImportApplied={handleStorageImportApplied}
+              getScheduleSnapshot={() => scheduleSnapshotRef.current}
+              programHasContent={programHasContent}
+              debugSnapshot={storageDebugSnapshot}
+            />
 
             {tableViewMode === "gün" ? (
               <button
@@ -1864,7 +2035,7 @@ export default function ScheduleTable({
 
         {!programHasContent ? (
           <p className="schedule-no-saved-program" role="status">
-            Bu tarayıcı için kayıtlı program bulunamadı.
+            Henüz program içeriği yok. Düzenleyin veya JSON içe aktarın; değişiklikleri kalıcı yapmak için Kaydet’e basın.
           </p>
         ) : null}
 
