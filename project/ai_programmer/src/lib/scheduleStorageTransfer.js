@@ -210,27 +210,20 @@ export function validateAndMigrateImport(raw, validGroupNames) {
   };
 }
 
-export function parseImportJsonText(text, validGroupNames) {
-  const trimmed = String(text ?? "").trim();
-  if (!trimmed) {
-    return { ok: false, errors: ["Dosya boş."] };
-  }
-  const parsed = safeJsonParse(trimmed);
-  if (!parsed.ok) {
-    return { ok: false, errors: [`JSON ayrıştırma hatası: ${parsed.error}`] };
-  }
-  return validateAndMigrateImport(parsed.value, validGroupNames);
-}
-
 /**
  * Supabase `data` sütunu için düz nesne (formatVersion dışı).
  */
 export function buildScheduleProgramPayloadFromState(assignmentsByDay, visibleGroups, teacherViewEntries) {
-  const bundle = buildExportBundleFromState(assignmentsByDay, visibleGroups, teacherViewEntries);
+  const visArr =
+    visibleGroups instanceof Set
+      ? [...visibleGroups]
+      : Array.isArray(visibleGroups)
+        ? [...visibleGroups]
+        : [];
   return {
-    assignmentsByDay: bundle.keys[STORAGE_KEYS.assignmentsByDay] ?? {},
-    visibleGroups: bundle.keys[STORAGE_KEYS.visibleGroups] ?? [],
-    teacherViewEntries: bundle.keys[STORAGE_KEYS.teacherViewEntries] ?? {},
+    assignmentsByDay: assignmentsByDay && typeof assignmentsByDay === "object" ? assignmentsByDay : {},
+    visibleGroups: visArr.filter((g) => typeof g === "string"),
+    teacherViewEntries: teacherViewEntries && typeof teacherViewEntries === "object" ? teacherViewEntries : {},
   };
 }
 
@@ -292,46 +285,6 @@ export function clearLegacyScheduleLocalStorage() {
   }
 }
 
-/**
- * Mevcut React state’ten dışa aktarma paketi (localStorage okumaz).
- * @param {Record<string, Record<string, unknown>>} assignmentsByDay
- * @param {Set<string>|string[]} visibleGroups
- * @param {Record<string, unknown>} teacherViewEntries
- */
-export function buildExportBundleFromState(assignmentsByDay, visibleGroups, teacherViewEntries) {
-  const visArr =
-    visibleGroups instanceof Set
-      ? [...visibleGroups]
-      : Array.isArray(visibleGroups)
-        ? [...visibleGroups]
-        : [];
-  const keys = {
-    [STORAGE_KEYS.assignmentsByDay]: assignmentsByDay && typeof assignmentsByDay === "object" ? assignmentsByDay : {},
-    [STORAGE_KEYS.visibleGroups]: visArr.filter((g) => typeof g === "string"),
-    [STORAGE_KEYS.teacherViewEntries]:
-      teacherViewEntries && typeof teacherViewEntries === "object" ? teacherViewEntries : {},
-  };
-  return {
-    formatVersion: EXPORT_FORMAT_VERSION,
-    exportedAt: new Date().toISOString(),
-    app: EXPORT_APP_ID,
-    keys,
-  };
-}
-
-export function downloadScheduleExportJsonFromBundle(bundle) {
-  const text = JSON.stringify(bundle, null, 2);
-  const blob = new Blob([text], { type: "application/json;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `ders-programi-yedek-${new Date().toISOString().slice(0, 10)}.json`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
-
 /** Tabloda veya öğretmen görünümünde anlamlı içerik var mı */
 export function hasMeaningfulProgramData(assignmentsByDay, teacherViewEntries) {
   if (teacherViewEntries && typeof teacherViewEntries === "object" && Object.keys(teacherViewEntries).length > 0) {
@@ -360,31 +313,3 @@ export function hasMeaningfulLegacyLocalStorage() {
   }
 }
 
-export function countAssignmentCells(assignmentsByDayObj) {
-  if (!isPlainObject(assignmentsByDayObj)) return 0;
-  let n = 0;
-  for (const day of DAYS) {
-    const block = assignmentsByDayObj[day];
-    if (block && isPlainObject(block)) n += Object.keys(block).length;
-  }
-  return n;
-}
-
-/**
- * @param {object} [opts]
- * @param {string|null} [opts.activeProgramId]
- */
-export function getLiveStorageDebugSnapshot(assignmentsByDay, visibleGroups, teacherViewEntries, opts = {}) {
-  const vg = visibleGroups instanceof Set ? [...visibleGroups] : Array.isArray(visibleGroups) ? visibleGroups : [];
-  return {
-    keys: { ...STORAGE_KEYS },
-    assignmentsKey: STORAGE_KEYS.assignmentsByDay,
-    activeProgramId: opts.activeProgramId ?? null,
-    readOk: { assignments: true, visibleGroups: true, teacherView: true },
-    errors: [],
-    assignmentCellCount: countAssignmentCells(assignmentsByDay),
-    visibleGroupCount: vg.length,
-    teacherViewTeacherCount:
-      teacherViewEntries && typeof teacherViewEntries === "object" ? Object.keys(teacherViewEntries).length : 0,
-  };
-}

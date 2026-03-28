@@ -22,14 +22,12 @@ import {
   readLegacyScheduleLocalStorageForMigration,
   clearLegacyScheduleLocalStorage,
   hasMeaningfulProgramData,
-  getLiveStorageDebugSnapshot,
 } from "../../lib/scheduleStorageTransfer.js";
 import {
   getSchedules,
   saveSchedule,
   updateSchedule,
 } from "../../../../src/lib/scheduleProgramsService.ts";
-import ScheduleStorageTransferPanel from "./ScheduleStorageTransferPanel.jsx";
 
 const groupNames = kurumData.gruplar ?? [];
 const toMinutes = (time) => {
@@ -51,6 +49,7 @@ const timeSlots = Object.entries(kurumData.ders_saatleri ?? {})
 const isBreakSlot = (slotName) => slotName.toLowerCase().includes("arası");
 const DAYS = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
 const DEFAULT_PROGRAM_NAME = "Ana program";
+const AUTO_SAVE_DEBOUNCE_MS = 1200;
 
 const SLOT_IDS_DESC_FOR_CELLKEY = [...timeSlots].map((t) => String(t.slot)).sort((a, b) => b.length - a.length);
 
@@ -250,12 +249,17 @@ export default function ScheduleTable({
 
   const [assignmentsByDay, setAssignmentsByDay] = React.useState(() => createEmptyAssignmentsByDay());
 
-  const scheduleSnapshotRef = React.useRef({
-    assignmentsByDay,
-    visibleGroups,
-    teacherViewEntries,
+  const persistSnapshotRef = React.useRef({ assignmentsByDay, visibleGroups, teacherViewEntries });
+  const activeProgramIdRef = React.useRef(activeProgramId);
+  const supabaseUserIdRef = React.useRef(supabaseUserId);
+  const skipAutoSaveRef = React.useRef(0);
+  const persistGenRef = React.useRef(0);
+
+  React.useLayoutEffect(() => {
+    persistSnapshotRef.current = { assignmentsByDay, visibleGroups, teacherViewEntries };
+    activeProgramIdRef.current = activeProgramId;
+    supabaseUserIdRef.current = supabaseUserId;
   });
-  scheduleSnapshotRef.current = { assignmentsByDay, visibleGroups, teacherViewEntries };
 
   const lessonLoadByGroup = kurumData.ders_yükü ?? {};
   const optionalLessonsByGroup = kurumData.opsiyonel_dersler ?? {};
@@ -1551,6 +1555,7 @@ export default function ScheduleTable({
       }
 
       const preferred = rows.find((r) => r.program_name === DEFAULT_PROGRAM_NAME) ?? rows[0];
+      skipAutoSaveRef.current = 1;
       setActiveProgramId(preferred.id);
       applyServerRowToState(preferred);
       clearLegacyScheduleLocalStorage();
@@ -1563,14 +1568,12 @@ export default function ScheduleTable({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- yalnızca kullanıcı / oturum değişiminde tam yükleme
   }, [supabaseUserId]);
 
-  const handleSaveToSupabase = React.useCallback(async () => {
-    setSaveError(null);
-    if (!supabaseUserId) {
-      setSaveError("Kayıt için oturum gerekli.");
-      setSaveStatus("error");
-      return;
-    }
-    const payload = buildScheduleProgramPayloadFromState(assignmentsByDay, visibleGroups, teacherViewEntries);
+  const flushPersistToSupabase = React.useCallback(async () => {
+    const uid = supabaseUserIdRef.current;
+    if (!uid) return;
+
+    const snap = persistSnapshotRef.current;
+    const payload = buildScheduleProgramPayloadFromState(snap.assignmentsByDay, snap.visibleGroups, snap.teacherViewEntries);
     if (
       !payload.assignmentsByDay ||
       typeof payload.assignmentsByDay !== "object" ||
@@ -1578,32 +1581,67 @@ export default function ScheduleTable({
       !payload.teacherViewEntries ||
       typeof payload.teacherViewEntries !== "object"
     ) {
-      setSaveError("Kaydedilecek veri boş veya geçersiz.");
+      setSaveError("Kaydedilecek veri geçersiz.");
       setSaveStatus("error");
       return;
     }
 
+    const gen = ++persistGenRef.current;
     setSaveStatus("saving");
+    setSaveError(null);
+
+    let id = activeProgramIdRef.current;
     let result;
-    if (activeProgramId) {
-      result = await updateSchedule(activeProgramId, { data: payload });
+    if (id) {
+      result = await updateSchedule(id, { data: payload });
     } else {
       result = await saveSchedule({
-        userId: supabaseUserId,
+        userId: uid,
         programName: DEFAULT_PROGRAM_NAME,
         data: payload,
       });
-      if (result.ok) setActiveProgramId(result.data.id);
     }
 
+    if (gen !== persistGenRef.current) return;
+
     if (result.ok) {
+      if (!id && result.data?.id) {
+        const newId = result.data.id;
+        activeProgramIdRef.current = newId;
+        setActiveProgramId(newId);
+      }
       setSaveStatus("saved");
-      window.setTimeout(() => setSaveStatus("idle"), 2000);
+      window.setTimeout(() => {
+        setSaveStatus((s) => (s === "saved" ? "idle" : s));
+      }, 2000);
     } else {
       setSaveError(result.error);
       setSaveStatus("error");
     }
-  }, [supabaseUserId, activeProgramId, assignmentsByDay, visibleGroups, teacherViewEntries]);
+  }, []);
+
+  React.useEffect(() => {
+    if (scheduleLoadStatus !== "ready" || !supabaseUserId || !allowScheduleEdit) return;
+
+    const t = window.setTimeout(() => {
+      if (skipAutoSaveRef.current > 0) {
+        skipAutoSaveRef.current -= 1;
+        return;
+      }
+      flushPersistToSupabase();
+    }, AUTO_SAVE_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(t);
+  }, [
+    assignmentsByDay,
+    visibleGroups,
+    teacherViewEntries,
+    scheduleLoadStatus,
+    supabaseUserId,
+    allowScheduleEdit,
+    activeProgramId,
+    flushPersistToSupabase,
+  ]);
 
   const handleRetryLoad = React.useCallback(() => {
     setScheduleLoadError(null);
@@ -1626,17 +1664,13 @@ export default function ScheduleTable({
         return;
       }
       const preferred = rows.find((r) => r.program_name === DEFAULT_PROGRAM_NAME) ?? rows[0];
+      skipAutoSaveRef.current = 1;
       setActiveProgramId(preferred.id);
       applyServerRowToState(preferred);
       clearLegacyScheduleLocalStorage();
       setScheduleLoadStatus("ready");
     })();
   }, [supabaseUserId, applyServerRowToState]);
-
-  const storageDebugSnapshot = React.useMemo(
-    () => getLiveStorageDebugSnapshot(assignmentsByDay, visibleGroups, teacherViewEntries, { activeProgramId }),
-    [assignmentsByDay, visibleGroups, teacherViewEntries, activeProgramId]
-  );
 
   return (
     <div
@@ -1661,9 +1695,20 @@ export default function ScheduleTable({
           <div className="schedule-persist-row">
             <p className="schedule-persist-info">
               {supabaseUserId
-                ? "Veriler artık hesabınıza kaydediliyor ve tüm cihazlardan erişilebilir."
+                ? allowScheduleEdit
+                  ? "Veriler hesabınıza kaydedilir; düzenlemeler yaklaşık 1 saniye sonra otomatik olarak Supabase’e yazılır."
+                  : "Veriler hesabınıza kaydedilir; düzenleme yetkiniz yok (salt görüntüleme)."
                 : "Kalıcı kayıt için yönetim paneline giriş yapın."}
             </p>
+            {supabaseUserId && allowScheduleEdit && saveStatus !== "idle" ? (
+              <p className="schedule-persist-status" aria-live="polite">
+                {saveStatus === "saving"
+                  ? "Kaydediliyor…"
+                  : saveStatus === "saved"
+                    ? "Kaydedildi."
+                    : "Son kayıt başarısız."}
+              </p>
+            ) : null}
             {saveError ? (
               <p className="schedule-save-error" role="alert">
                 {saveError}
@@ -1991,24 +2036,6 @@ export default function ScheduleTable({
               ) : null}
             </div>
 
-            {allowScheduleEdit && supabaseUserId && scheduleLoadStatus === "ready" ? (
-              <button
-                type="button"
-                className="schedule-supabase-save-btn"
-                onClick={handleSaveToSupabase}
-                disabled={saveStatus === "saving"}
-              >
-                {saveStatus === "saving" ? "Kaydediliyor…" : saveStatus === "saved" ? "Kaydedildi" : "Kaydet"}
-              </button>
-            ) : null}
-            <ScheduleStorageTransferPanel
-              groupNames={groupNames}
-              onImportApplied={handleStorageImportApplied}
-              getScheduleSnapshot={() => scheduleSnapshotRef.current}
-              programHasContent={programHasContent}
-              debugSnapshot={storageDebugSnapshot}
-            />
-
             {tableViewMode === "gün" ? (
               <button
                 type="button"
@@ -2035,7 +2062,7 @@ export default function ScheduleTable({
 
         {!programHasContent ? (
           <p className="schedule-no-saved-program" role="status">
-            Henüz program içeriği yok. Düzenleyin veya JSON içe aktarın; değişiklikleri kalıcı yapmak için Kaydet’e basın.
+            Henüz program içeriği yok. Düzenleme modunda hücrelere ders atayarak başlayın; kayıtlar otomatik olarak hesabınıza yazılır.
           </p>
         ) : null}
 

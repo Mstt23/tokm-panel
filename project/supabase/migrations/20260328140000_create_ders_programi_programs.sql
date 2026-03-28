@@ -33,7 +33,7 @@ drop trigger if exists ders_programi_programs_set_updated_at on public.ders_prog
 create trigger ders_programi_programs_set_updated_at
   before update on public.ders_programi_programs
   for each row
-  execute function public.ders_programi_set_updated_at();
+  execute procedure public.ders_programi_set_updated_at();
 
 alter table public.ders_programi_programs enable row level security;
 
