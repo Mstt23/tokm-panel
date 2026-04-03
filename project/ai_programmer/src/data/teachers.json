@@ -96,10 +96,10 @@
             "çalışma_günleri": {
                 "Pazartesi": "10:00-19:00",
                 "Salı": "10:00-19:00",
-                "Çarşamba": null,
+                "Çarşamba": "10:00-19:00",
                 "Perşembe": "10:00-19:00",
                 "Cuma":"10:00-19:00",
-                "Cumartesi": "10:00-19:00",
+                "Cumartesi": null,
                 "Pazar": "10:00-19:00"
             },
             "gruplar": [
