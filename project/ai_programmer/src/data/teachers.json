@@ -94,11 +94,11 @@
                 "Dil Bilgisi"           
             ],
             "çalışma_günleri": {
-                "Pazartesi": "18:00-19:00",
-                "Salı": null,
+                "Pazartesi": "10:00-19:00",
+                "Salı": "10:00-19:00",
                 "Çarşamba": null,
-                "Perşembe": "18:00-19:00",
-                "Cuma": null,
+                "Perşembe": "10:00-19:00",
+                "Cuma":"10:00-19:00",
                 "Cumartesi": "10:00-19:00",
                 "Pazar": "10:00-19:00"
             },
